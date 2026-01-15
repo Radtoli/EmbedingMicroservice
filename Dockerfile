@@ -4,11 +4,19 @@ FROM python:3.10-slim
 # Diretório de trabalho
 WORKDIR /app
 
-# Copia o arquivo main.py para o container
-COPY main.py .
+# Atualizar pip e instalar dependências do sistema
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/* \
+    && pip install --upgrade pip
 
-# Instala as dependências necessárias
-RUN pip install --no-cache-dir fastapi uvicorn sentence-transformers
+# Copiar requirements.txt e instalar dependências Python
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar o código da aplicação
+COPY main.py .
 
 # Expõe a porta padrão do FastAPI/Uvicorn
 EXPOSE 8000
