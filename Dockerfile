@@ -4,12 +4,16 @@ FROM python:3.10-slim
 # Diretório de trabalho
 WORKDIR /app
 
-# Atualizar pip e instalar dependências do sistema
-RUN apt-get update && apt-get install -y \
+# Instalar dependências do sistema necessárias para compilação
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
     gcc \
     g++ \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip install --upgrade pip
+    build-essential && \
+    rm -rf /var/lib/apt/lists/*
+
+# Atualizar pip
+RUN pip install --no-cache-dir --upgrade pip
 
 # Copiar requirements.txt e instalar dependências Python
 COPY requirements.txt .
